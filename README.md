@@ -1,6 +1,31 @@
+<div align="center">
+
 # WorkBuddy for Linux (Unofficial)
 
-[English](#english) | [简体中文](#简体中文)
+</div>
+
+<div align="center">
+
+WorkBuddy 的非官方 Linux 自动化移植与安装构建脚本工具
+
+</div>
+
+<p align="middle">
+  <img src="https://img.shields.io/badge/deb-Ubuntu_%7C_Debian_%7C_Linux_Mint-A81D33?style=flat&logo=debian&logoColor=white" alt="Debian Ubuntu Support">
+  <img src="https://img.shields.io/badge/arch-ArchLinux_%7C_CachyOS_%7C_Manjaro-1793D1?style=flat&logo=arch-linux&logoColor=white" alt="AUR Package">
+  <img src="https://img.shields.io/badge/rpm-Fedora_%7C_RHEL-006699?style=flat&logo=fedora&logoColor=white" alt="Fedora RHEL Support">
+  <br>
+  <img src="https://img.shields.io/badge/版本适配-4.22.10-0052D9?style=flat&logo=probot&logoColor=white" alt="Supported Version">
+  <img src="https://img.shields.io/badge/Electron-41.1.1-47307B?style=flat&logo=electron&logoColor=white" alt="Electron Version">
+  <img src="https://img.shields.io/badge/状态-Unofficial-d73a49?style=flat" alt="Status Unofficial">
+</p>
+
+
+<div align="center">
+
+[English](#english) | [简体中文](#简体中文) | [繁體中文](#繁體中文)
+
+</div>
 
 ---
 
@@ -14,21 +39,10 @@
 
 遇到任何 Bug 请在此仓库提 Issue ，严禁跳脸向官方客服反馈在 Linux 移植后使用的相关问题。
 
-## 项目状态
 
-目前项目已完整实现 Linux 端的转换与打包核心流程，具体功能如下：
+## 版本适配说明
 
-- 借助 `7z`/`7zz` 工具，自动提取 `downloads/` 目录下唯一的官方 DMG 安装包；
-- 从 macOS 应用包元数据中，自动识别上游 Electron 版本号；
-- 下载与识别版本匹配的 Linux 版 Electron 运行时；
-- 将 WorkBuddy 应用核心程序（`app.asar` 及 `app.asar.unpacked`）复制至 `resources/` 目录；
-- 通过 `@electron/rebuild`，针对 Linux 系统与 Electron 环境重建原生 Node 模块；
-- 安装 `@lydell/node-pty` Linux 平台预编译包以支持内置 CLI；
-- 更新适配 Linux 平台的依赖包，例如 `@vscode/ripgrep`；
-- 自动生成 Linux 系统启动器与桌面入口文件；
-- 根据当前 Linux 发行版，一键生成适配的 `.deb`、`.rpm` 或 `.pkg.tar.zst` 格式安装包。
-
-> 项目**未集成自动更新功能**，如需更新软件，只需手动下载新版官方 DMG，放入 `downloads/` 目录后，重新执行构建、安装流程即可覆盖本地旧版本。
+当前补丁基于官方 WorkBuddy **4.22.10**（构建号 `27634624-ec5e02bd`）验证通过。更高版本的 DMG 可能因为上游代码结构变化导致补丁无法正确应用。如遇到构建失败或运行异常，请在本仓库提 Issue 并附上所使用的 DMG 版本号。
 
 ## 快速安装
 
@@ -40,7 +54,7 @@
 4. 依次执行：
 
 ```bash
-bash scripts/install-deps.sh
+make deps
 make build-app
 make package
 make install
@@ -83,6 +97,30 @@ make package
 make install
 ```
 
+### 清理构建产物
+
+清除所有构建生成的临时文件与应用目录：
+
+```bash
+make clean
+```
+
+## 项目状态
+
+目前项目已完整实现 Linux 端的转换与打包核心流程，具体功能如下：
+
+- 借助 `7z`/`7zz` 工具，自动提取 `downloads/` 目录下唯一的官方 DMG 安装包；
+- 从 macOS 应用包元数据中，自动识别上游 Electron 版本号；
+- 下载与识别版本匹配的 Linux 版 Electron 运行时；
+- 将 WorkBuddy 应用核心程序（`app.asar` 及 `app.asar.unpacked`）复制至 `resources/` 目录；
+- 通过 `@electron/rebuild`，针对 Linux 系统与 Electron 环境重建原生 Node 模块；
+- 安装 `@lydell/node-pty` Linux 平台预编译包以支持内置 CLI；
+- 更新适配 Linux 平台的依赖包，例如 `@vscode/ripgrep`；
+- 自动生成 Linux 系统启动器与桌面入口文件；
+- 根据当前 Linux 发行版，一键生成适配的 `.deb`、`.rpm` 或 `.pkg.tar.zst` 格式安装包。
+
+> 项目**未集成自动更新功能**，如需更新软件，只需手动下载新版官方 DMG，放入 `downloads/` 目录后，重新执行构建、安装流程即可覆盖本地旧版本。
+
 ## 实现原理
 
 本项目参考了 `codebuddy-ide-cn-linux`（同作者的成功移植案例）的本地转换与打包逻辑，但**未移植自动更新模块**，核心流程如下：
@@ -115,10 +153,6 @@ WorkBuddy 基于 VS Code/Electron 开发，其 macOS 应用的 `app.asar` 文件
 3. **托盘图标显示为感叹号**：上游把图片 resize 成内存 NativeImage 传给 Tray，AppIndicator 无法正确渲染。**修复方式**：Linux 下直接用磁盘上的 `.workbuddy-linux/workbuddy.png` 路径构造 Tray。
 4. **Sidecar 子进程 spawn 失败（E2BIG）**：`buildCliEnv()` 显式把 260KB 字符串塞进 spawn 的 env 对象。**修复方式**：Monkey-patch `child_process.spawn/spawnSync`，超过 100KB 的 env 条目自动 spill 到临时文件，子进程启动时从文件读回并通过 Proxy 恢复。
 5. **`@lydell/node-pty-linux-x64` 找不到**：原 macOS asar 里只有 darwin 平台包。**修复方式**：repack 时将 Linux 平台包注入 asar 并标记为 unpacked。
-
-## 版本适配说明
-
-当前补丁基于官方 WorkBuddy **4.22.10**（构建号 `27634624-ec5e02bd`）验证通过。更高版本的 DMG 可能因为上游代码结构变化导致补丁无法正确应用。如遇到构建失败或运行异常，请在本仓库提 Issue 并附上所使用的 DMG 版本号。
 
 ## 常用自定义配置
 
@@ -168,6 +202,178 @@ ELECTRON_HEADERS_URL=https://artifacts.electronjs.org/headers/dist bash install.
 
 ---
 
+# 繁體中文
+
+## 專案簡介
+
+這是一款非官方社群工具，核心作用是將你自行取得的官方 WorkBuddy macOS Intel/x64 版本 DMG 安裝包，轉換為可在本機 Linux 系統運行的 Electron 應用程式。
+
+本倉庫**僅作為轉換工具**，絕不充當軟體分發管道。請務必前往官方網站下載正版 Intel/x64 架構 DMG 安裝包，放置於專案 `downloads/` 目錄下；所有產生的應用程式目錄、安裝包產物均僅保留在本機，且已加入 Git 忽略規則，不會被提交至倉庫。
+
+遇到任何 Bug 請在此倉庫提 Issue ，嚴禁跳臉向官方客服反饋在 Linux 移植後使用的相關問題。
+
+## 版本適配說明
+
+當前補丁基於官方 WorkBuddy **4.22.10**（構建號 `27634624-ec5e02bd`）驗證通過。更高版本的 DMG 可能因為上游程式碼結構變化導致補丁無法正確套用。如遇到構建失敗或運行異常，請在本倉庫提 Issue 並附上所使用的 DMG 版本號。
+
+## 快速安裝
+
+本專案**未上架 AUR**，所有 Linux 發行版均需在本機透過本倉庫腳本完成構建與安裝。
+
+1. 複製本專案至本機 Linux 機器；
+2. 在專案根目錄建立 `downloads` 資料夾；
+3. 自行從官方管道下載 Intel/x64 架構 DMG 安裝包，放入 `downloads/` 目錄（僅放**唯一一份**）；
+4. 依序執行：
+
+```bash
+make deps
+make build-app
+make package
+make install
+```
+
+`scripts/install-deps.sh` 會自動識別當前系統的套件管理器（支援 `apt`、`dnf5`、`dnf`、`pacman`、`zypper`），一鍵安裝 DMG 提取、Electron 運行時下載、原生模組重建、安裝包產生所需的全部依賴。
+
+> 測試範圍：已在 Debian 系（Linux Mint 22.3）和 Arch 系（CachyOS）完成完整打包部署實測，運行穩定。
+
+## 構建與運行
+
+### 推薦構建方式
+
+將官方 DMG 檔案放入 `downloads/` 目錄後，直接執行：
+
+```bash
+make build-app
+```
+
+### 自訂 DMG 路徑
+
+也可手動指定官方 DMG 檔案路徑：
+
+```bash
+make build-app DMG=/path/to/WorkBuddy.dmg
+```
+
+### 運行產生的應用程式
+
+```bash
+make run-app
+```
+
+### 打包並安裝
+
+自動產生適配當前發行版的安裝包，並完成本機安裝：
+
+```bash
+make package
+make install
+```
+
+### 清理構建產物
+
+清除所有構建產生的臨時檔案與應用程式目錄：
+
+```bash
+make clean
+```
+
+## 專案狀態
+
+目前專案已完整實現 Linux 端的轉換與打包核心流程，具體功能如下：
+
+- 借助 `7z`/`7zz` 工具，自動提取 `downloads/` 目錄下唯一的官方 DMG 安裝包；
+- 從 macOS 應用程式套件元資料中，自動識別上游 Electron 版本號；
+- 下載與識別版本匹配的 Linux 版 Electron 運行時；
+- 將 WorkBuddy 應用程式核心程式（`app.asar` 及 `app.asar.unpacked`）複製至 `resources/` 目錄；
+- 透過 `@electron/rebuild`，針對 Linux 系統與 Electron 環境重建原生 Node 模組；
+- 安裝 `@lydell/node-pty` Linux 平台預編譯套件以支援內建 CLI；
+- 更新適配 Linux 平台的依賴套件，例如 `@vscode/ripgrep`；
+- 自動產生 Linux 系統啟動器與桌面入口檔案；
+- 根據當前 Linux 發行版，一鍵產生適配的 `.deb`、`.rpm` 或 `.pkg.tar.zst` 格式安裝包。
+
+> 專案**未集成自動更新功能**，如需更新軟體，只需手動下載新版官方 DMG，放入 `downloads/` 目錄後，重新執行構建、安裝流程即可覆蓋本機舊版本。
+
+## 實現原理
+
+本專案參考了 `codebuddy-ide-cn-linux`（同作者的成功移植案例）的本機轉換與打包邏輯，但**未移植自動更新模組**，核心流程如下：
+
+1. 以使用者自行提供的官方 macOS DMG 安裝包作為輸入來源；
+2. 僅提取 Electron 應用程式核心程式，不對外分發任何官方軟體內容；
+3. 用對應版本的 Linux Electron 運行時，替換原 macOS 版運行時；
+4. **原生模組從原始碼重新編譯**：macOS DMG 預打包的原生模組（如 `node-pty`、`better-sqlite3`）無法在 Linux 上直接使用。本工具自動從 npm 下載對應版本的完整原始碼，在隔離目錄基於 Linux Electron 頭檔案重新編譯為 ELF 二進位檔案，再覆蓋回應用程式目錄；
+5. 安裝 Linux 平台專屬的預編譯套件（如 `@lydell/node-pty-linux-x64`）以支援內建終端 CLI；
+6. 更新適配 Linux 平台的專屬二進位依賴套件；
+7. 本機產生 Linux 系統啟動設定與安裝包元資料；
+8. 編譯產生對應發行版的原生安裝包，透過 `make install` 完成最新版本安裝。
+
+WorkBuddy 基於 VS Code/Electron 開發，其 macOS 應用程式的 `app.asar` 檔案包含跨平台 JavaScript 核心程式碼，`app.asar.unpacked` 目錄包含原生模組。Linux 轉換只需完成平台二進位檔案替換、原生模組重新編譯即可實現相容。
+
+## 移植後的已知限制
+
+由於上游打包特性的限制以及閉源商業元件的存在，移植後的 Linux 版本存在以下預期的功能降級（不影響核心開發體驗）：
+
+1. **騰訊文件引擎失效**：官方 DMG 包內捆綁的 `@tencent/docs-engine` 僅提供了 macOS Arm64 架構的專有二進位庫（`.dylib`）。Linux 無法運行此類檔案且無原始碼可供重新編譯，為防止底層引發 `dlopen invalid ELF header` 導致的主程序崩潰，轉換腳本已將其強制移除。**影響**：應用程式內如果包含深度整合的騰訊文件協同編輯功能將不可用，不影響 AI 助手和本機程式碼編輯。
+2. **AI 程式碼沙盒降級**：內建 CLI 工具 `vendor/sandbox` 是騰訊內部私有的程式碼沙盒引擎（Tencent Sandbox），使用的是包含 Windows 和 macOS 格式的預編譯隔離庫。由於缺少 Linux 版沙盒核心，腳本已清理無關平台的二進位檔案。**影響**：當 AI 助手嘗試全自動執行程式碼時，會因為沙盒模組缺失而回退到無沙盒的真實終端中執行，或者提示安全環境不可用而拒絕執行自動化腳本。
+3. **自動更新不可用**：Linux 移植版已禁用應用程式內的「檢查更新」功能（選單項目灰化、後台自動檢查已關閉）。上游更新器依賴 macOS ShipIt / Windows Squirrel 安裝器，在 Linux 上無法使用。如需更新，請手動下載新版官方 DMG 並重新執行構建流程。
+
+## 移植過程中已修復的問題
+
+以下問題在移植過程中已透過 Linux 運行時補丁（`scripts/lib/apply-linux-patches.js`）修復：
+
+1. **主視窗無法彈出（E2BIG）**：上游程式碼將 ~260KB 的產品設定 JSON 寫入 `process.env.ACC_PRODUCT_CONFIG_V3`，超過 Linux `MAX_ARG_STRLEN`（128KB/條）限制，導致 Chromium 網路服務/GPU/Utility 子程序全部 spawn 失敗，渲染程序無法啟動。**修復方式**：用 Proxy 替換 `process.env`，將超大 key 隱藏在 JS 私有 slot 中，libc environ 保持小體積。
+2. **系統匣右鍵選單為空**：Linux 的 AppIndicator 後端不觸發 `click`/`right-click` 事件，只顯示透過 `tray.setContextMenu()` 附加的選單。**修復方式**：在 Linux 下額外呼叫 `this.tray.setContextMenu(contextMenu)`。
+3. **系統匣圖示顯示為驚嘆號**：上游把圖片 resize 成記憶體 NativeImage 傳給 Tray，AppIndicator 無法正確渲染。**修復方式**：Linux 下直接用磁碟上的 `.workbuddy-linux/workbuddy.png` 路徑構造 Tray。
+4. **Sidecar 子程序 spawn 失敗（E2BIG）**：`buildCliEnv()` 顯式把 260KB 字串塞進 spawn 的 env 物件。**修復方式**：Monkey-patch `child_process.spawn/spawnSync`，超過 100KB 的 env 條目自動 spill 到臨時檔案，子程序啟動時從檔案讀回並透過 Proxy 恢復。
+5. **`@lydell/node-pty-linux-x64` 找不到**：原 macOS asar 裡只有 darwin 平台套件。**修復方式**：repack 時將 Linux 平台套件注入 asar 並標記為 unpacked。
+
+## 常用自訂設定
+
+如需自訂安裝路徑、切換 Electron 鏡像，可透過以下命令執行：
+
+```bash
+# 自訂安裝目錄
+WORKBUDDY_INSTALL_DIR=/opt/tmp/workbuddy-app bash install.sh
+# 切換Electron鏡像來源
+ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ bash install.sh
+# 自訂Electron頭檔案下載位址
+ELECTRON_HEADERS_URL=https://artifacts.electronjs.org/headers/dist bash install.sh
+```
+
+## 倉庫維護規範
+
+以下目錄因會存放上游軟體、產生類安裝包檔案，已被 Git 忽略，**切勿手動提交**：
+
+- `downloads/`
+- `build/`
+- `workbuddy-app/`
+- `dist/`
+- `reference/`
+
+禁止提交 DMG 安裝包、解壓後的 `.app` 應用程式套件、產生的 Linux 應用程式目錄及各類原生安裝包產物。
+
+## 免責聲明
+
+本專案為**非官方社群開源工具**，與騰訊官方無任何關聯。WorkBuddy 是騰訊旗下產品（版權 © 2026 騰訊雲計算（北京）有限責任公司丨騰訊科技（深圳）有限公司 版權所有）。本工具不分發任何 WorkBuddy 官方軟體，僅自動化實現使用者對自有正版安裝包的格式轉換流程。
+
+使用本工具產生的 WorkBuddy 應用程式仍受騰訊官方協議約束，請以官網或應用程式內最新版服務條款、隱私協議為準。
+
+使用本工具即表示您已知悉並同意以下內容：
+
+1. **使用者責任**：您有責任確保自行取得的 DMG 安裝包來源合法，並遵守 WorkBuddy 的最終使用者授權協議（EULA）及相關服務條款。
+2. **無擔保**：本工具按「現狀」提供，不提供任何形式的明示或暗示擔保，包括但不限於對適銷性、特定用途適用性和非侵權性的擔保。
+3. **無官方支援**：本專案是獨立社群專案，騰訊官方不對本工具提供任何技術支援。在 Linux 移植環境下遇到的問題，請在本倉庫提 Issue，**嚴禁向官方客服反饋**。
+4. **風險自擔**：使用本工具進行格式轉換和運行所產生的一切後果，由使用者自行承擔。
+5. **商標聲明**：WorkBuddy、CodeBuddy 及相關標識是騰訊公司的商標或註冊商標。本專案使用這些名稱僅用於描述性目的，不暗示任何官方認可或授權。
+6. **下架預案**：如騰訊或任何相關權利方對本專案存在異議，請透過本倉庫 Issue 或郵件聯繫維護者。維護者承諾在收到合理異議後立即停止維護，並按權利方要求處理 GitHub 倉庫。
+7. **專案定位**：本專案（包括本 GitHub 倉庫及相關自動化腳本）僅用於技術研究與概念驗證。原作者從未、亦絕不分發任何官方二進位軟體。
+8. **第三方責任**：任何第三方因 Fork、修改本專案，或自行分發移植二進位安裝包（Releases）而產生的版權爭議與法律責任，均由該第三方獨立承擔，與本專案原作者無關。
+
+## 開源授權條款
+
+本專案（轉換腳本及相關 recipe）採用 MIT 開源授權條款，詳細內容請查看 [LICENSE](LICENSE) 檔案。MIT 授權僅覆蓋本倉庫中的轉換工具，**不延伸到透過本工具安裝的騰訊 WorkBuddy 二進位檔案**——後者仍受騰訊官方私有協議約束。
+
+---
+
 # English
 
 ## Project Introduction
@@ -178,21 +384,9 @@ This repository **serves solely as a converter** and will never act as a softwar
 
 If you encounter any bugs, please submit an Issue in this repository. Do not directly contact official customer service to report issues related to usage after Linux porting.
 
-## Project Status
+## Version Compatibility
 
-The project currently fully implements the core Linux-side conversion and packaging workflow, with specific features as follows:
-
-- Automatically extract the single official DMG installer in the `downloads/` directory via `7z`/`7zz`;
-- Detect the upstream Electron version from the macOS application bundle metadata;
-- Download the matching Linux Electron runtime corresponding to the detected version;
-- Copy the core WorkBuddy application payload (`app.asar` and `app.asar.unpacked`) to the `resources/` directory;
-- Rebuild native Node modules for Linux system and Electron environment using `@electron/rebuild`;
-- Install `@lydell/node-pty` Linux platform prebuilt packages to support the built-in CLI;
-- Update Linux platform-adapted dependencies such as `@vscode/ripgrep`;
-- Automatically generate Linux system launcher and desktop entry files;
-- Generate compatible `.deb`, `.rpm` or `.pkg.tar.zst` packages based on the current Linux distribution.
-
-> No auto-update feature is integrated in this project. To update the software, simply manually download the latest official DMG, place it in the `downloads/` directory, and re-run the build and installation process to overwrite the old version.
+The current patches have been verified against official WorkBuddy **4.22.10** (build `27634624-ec5e02bd`). Higher versions of the DMG may have upstream code structure changes that prevent patches from applying correctly. If you encounter build failures or runtime issues, please file an Issue in this repository with the DMG version number you are using.
 
 ## Quick Install
 
@@ -247,6 +441,30 @@ make package
 make install
 ```
 
+### Clean Build Artifacts
+
+Remove all generated temporary files and application directories:
+
+```bash
+make clean
+```
+
+## Project Status
+
+The project currently fully implements the core Linux-side conversion and packaging workflow, with specific features as follows:
+
+- Automatically extract the single official DMG installer in the `downloads/` directory via `7z`/`7zz`;
+- Detect the upstream Electron version from the macOS application bundle metadata;
+- Download the matching Linux Electron runtime corresponding to the detected version;
+- Copy the core WorkBuddy application payload (`app.asar` and `app.asar.unpacked`) to the `resources/` directory;
+- Rebuild native Node modules for Linux system and Electron environment using `@electron/rebuild`;
+- Install `@lydell/node-pty` Linux platform prebuilt packages to support the built-in CLI;
+- Update Linux platform-adapted dependencies such as `@vscode/ripgrep`;
+- Automatically generate Linux system launcher and desktop entry files;
+- Generate compatible `.deb`, `.rpm` or `.pkg.tar.zst` packages based on the current Linux distribution.
+
+> No auto-update feature is integrated in this project. To update the software, simply manually download the latest official DMG, place it in the `downloads/` directory, and re-run the build and installation process to overwrite the old version.
+
 ## How It Works
 
 This project references the local conversion and packaging logic of `codebuddy-ide-cn-linux` (a successful porting case by the same author), but **does not port its auto-update module**. The core workflow is as follows:
@@ -279,10 +497,6 @@ The following issues have been resolved via Linux runtime patches (`scripts/lib/
 3. **Tray icon shows as exclamation mark**: Upstream passes a resized in-memory NativeImage to Tray, which AppIndicator cannot render. **Fix**: On Linux, construct the Tray from the on-disk `.workbuddy-linux/workbuddy.png` path.
 4. **Sidecar subprocess spawn fails (E2BIG)**: `buildCliEnv()` explicitly puts the 260KB string into the spawn env object. **Fix**: Monkey-patch `child_process.spawn/spawnSync` to spill env entries >100KB to temp files; child processes restore the value from file on startup.
 5. **`@lydell/node-pty-linux-x64` not found**: The original macOS asar only contains darwin platform packages. **Fix**: Inject the Linux platform package into the asar during repack and mark it as unpacked.
-
-## Version Compatibility
-
-The current patches have been verified against official WorkBuddy **4.22.10** (build `27634624-ec5e02bd`). Higher versions of the DMG may have upstream code structure changes that prevent patches from applying correctly. If you encounter build failures or runtime issues, please file an Issue in this repository with the DMG version number you are using.
 
 ## Useful Custom Configurations
 
