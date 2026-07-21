@@ -1,5 +1,7 @@
 # 简体中文
 
+> 当前成功支持版本：**WorkBuddy 5.2.6（macOS Intel/x64 DMG）**，已在 Ubuntu 22.04 x86_64 上验证。
+
 ## 项目简介
 
 这是一个非官方 Linux 移植工具，核心作用是将你自行获取的官方 WorkBuddy macOS Intel/x64 版本 DMG 安装包，转换为可在本地 Linux 系统运行的 Electron 应用。

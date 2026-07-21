@@ -23,6 +23,8 @@ WorkBuddy 的非官方 Linux 自動化移植與安裝構建腳本工具
 
 # 繁體中文
 
+> 當前成功支援版本：**WorkBuddy 5.2.6（macOS Intel/x64 DMG）**，已在 Ubuntu 22.04 x86_64 上驗證。
+
 ## 專案簡介
 
 這是一個非官方 Linux 移植工具，核心作用是將你自行取得的官方 WorkBuddy macOS Intel/x64 版本 DMG 安裝包，轉換為可在本機 Linux 系統執行的 Electron 應用。
@@ -194,4 +196,3 @@ ELECTRON_HEADERS_URL=https://artifacts.electronjs.org/headers/dist bash install.
 本專案（轉換腳本及相關 recipe）採用 MIT 開源授權條款，詳細內容請查看 [LICENSE](LICENSE) 檔案。MIT 授權僅覆蓋本倉庫中的轉換工具，**不延伸到透過本工具安裝的騰訊 WorkBuddy 二進位檔案**——後者仍受騰訊官方私有協議約束。
 
 ---
-

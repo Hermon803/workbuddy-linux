@@ -23,6 +23,8 @@ WorkBuddy — Unofficial Linux Port & Build Toolchain
 
 # English
 
+> Currently supported: **WorkBuddy 5.2.6 (macOS Intel/x64 DMG)**, verified on Ubuntu 22.04 x86_64.
+
 ## Project Introduction
 
 This is an independently maintained, unofficial Linux porting tool by `Hermon803`. It converts a legally obtained official WorkBuddy macOS Intel/x64 DMG installer into a local Linux Electron application.

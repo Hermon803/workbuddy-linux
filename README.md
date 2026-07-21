@@ -4,13 +4,15 @@ WorkBuddy — Unofficial Linux Port & Build Toolchain
 
 </div>
 
+> 当前成功支持版本：**WorkBuddy 5.2.6（macOS Intel/x64 DMG）**，已在 Ubuntu 22.04 x86_64 上验证。
+
 <p align="middle">
   <img src="https://img.shields.io/badge/deb-Ubuntu_%7C_Debian_%7C_Linux_Mint-A81D33?style=flat&logo=debian&logoColor=white" alt="Debian Ubuntu Support">
   <img src="https://img.shields.io/badge/arch-ArchLinux_%7C_CachyOS_%7C_Manjaro-1793D1?style=flat&logo=arch-linux&logoColor=white" alt="AUR Package">
   <img src="https://img.shields.io/badge/rpm-Fedora_%7C_RHEL-006699?style=flat&logo=fedora&logoColor=white" alt="Fedora RHEL Support">
   <br>
   <img src="https://img.shields.io/badge/Version-5.2.6-0052D9?style=flat&logo=probot&logoColor=white" alt="Supported Version">
-  <img src="https://img.shields.io/badge/Electron-41.1.1-47307B?style=flat&logo=electron&logoColor=white" alt="Electron Version">
+  <img src="https://img.shields.io/badge/Electron-37.10.3-47307B?style=flat&logo=electron&logoColor=white" alt="Electron Version">
   <img src="https://img.shields.io/badge/Status-Unofficial-d73a49?style=flat" alt="Status Unofficial">
 </p>
 
@@ -194,4 +196,3 @@ ELECTRON_HEADERS_URL=https://artifacts.electronjs.org/headers/dist bash install.
 本项目（转换脚本及相关 recipe）采用 MIT 开源许可证，详细内容请查看 [LICENSE](LICENSE) 文件。MIT 许可仅覆盖本仓库中的转换工具，**不延伸到通过本工具安装的腾讯 WorkBuddy 二进制文件**——后者仍受腾讯官方私有协议约束。
 
 ---
-
