@@ -19,6 +19,16 @@ require_cmd() {
 }
 
 find_7z() {
+    local common_dir repo_dir bundled_7zz
+    common_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    repo_dir="$(cd "$common_dir/../.." && pwd)"
+    bundled_7zz="$repo_dir/.tools/7zip/7zz"
+
+    if [ -x "$bundled_7zz" ]; then
+        echo "$bundled_7zz"
+        return 0
+    fi
+
     if command -v 7zz >/dev/null 2>&1; then
         command -v 7zz
         return 0
@@ -28,9 +38,10 @@ find_7z() {
         version_output="$(7z -version 2>&1 || true)"
         if [[ "$version_output" =~ 7-Zip\ (\[[0-9]+\]\ )?([0-9]+)\. ]]; then
             major_version="${BASH_REMATCH[2]}"
-            if [ "$major_version" -lt 21 ]; then
+            if [ "$major_version" -lt 22 ]; then
                 error "Found legacy p7zip (version $major_version), which cannot extract modern DMG files properly.
-Please install the official 7zip package (version >= 21) instead:
+APFS-based DMGs require 7-Zip 22 or newer. Run 'make deps' to install a
+project-local compatible version, or install a newer system package:
   Debian/Ubuntu: sudo apt install 7zip (remove p7zip-full first)
   Fedora/RHEL:   sudo dnf install 7zip
   Arch Linux:    sudo pacman -S 7zip
@@ -40,5 +51,5 @@ Please install the official 7zip package (version >= 21) instead:
         command -v 7z
         return 0
     fi
-    error "Missing 7z/7zz. Install 7zip."
+    error "Missing 7z/7zz. Run 'make deps' or install 7-Zip 22+."
 }

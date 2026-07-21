@@ -68,6 +68,8 @@ make install
 
 `scripts/install-deps.sh` 会自动识别当前系统的包管理器（支持 `apt`、`dnf5`、`dnf`、`pacman`、`zypper`），一键安装 DMG 提取、Electron 运行时下载、原生模块重建、安装包生成所需的全部依赖。
 
+> Ubuntu 22.04 自带的 7-Zip 21.07 不支持新版 APFS DMG。`make deps` 检测到旧版后会下载经 SHA-256 校验的官方 7-Zip 到项目本地 `.tools/`，不会覆盖系统命令。
+
 > 测试范围：已在 Debian 系（Linux Mint 22.3）和 Arch 系（CachyOS）完成完整打包部署实测，运行稳定。
 
 ## 构建与运行
@@ -240,6 +242,8 @@ make install
 
 `scripts/install-deps.sh` 會自動識別當前系統的套件管理器（支援 `apt`、`dnf5`、`dnf`、`pacman`、`zypper`），一鍵安裝 DMG 提取、Electron 運行時下載、原生模組重建、安裝包產生所需的全部依賴。
 
+> Ubuntu 22.04 內建的 7-Zip 21.07 不支援新版 APFS DMG。`make deps` 偵測到舊版後，會將經 SHA-256 驗證的官方 7-Zip 下載到專案本地 `.tools/`，不會覆寫系統指令。
+
 > 測試範圍：已在 Debian 系（Linux Mint 22.3）和 Arch 系（CachyOS）完成完整打包部署實測，運行穩定。
 
 ## 構建與運行
@@ -411,6 +415,8 @@ make install
 ```
 
 `scripts/install-deps.sh` automatically detects the package manager (`apt`, `dnf5`, `dnf`, `pacman`, `zypper`) and installs all dependencies needed for DMG extraction, Electron runtime download, native module rebuilding and package generation.
+
+> Ubuntu 22.04 ships 7-Zip 21.07, which cannot extract newer APFS-based DMGs. When `make deps` detects this version, it downloads an official SHA-256-verified 7-Zip build into the project-local `.tools/` directory without replacing system commands.
 
 > Testing scope: fully tested on Debian-based (Linux Mint 22.3) and Arch-based (CachyOS) systems.
 

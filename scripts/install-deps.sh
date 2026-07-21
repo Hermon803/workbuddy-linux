@@ -3,6 +3,10 @@ set -Eeuo pipefail
 
 MIN_NODE_MAJOR=20
 NODEJS_MAJOR="${NODEJS_MAJOR:-22}"
+SEVEN_ZIP_VERSION="${SEVEN_ZIP_VERSION:-26.02}"
+SEVEN_ZIP_RELEASE="${SEVEN_ZIP_RELEASE:-2602}"
+SEVEN_ZIP_X64_SHA256="${SEVEN_ZIP_X64_SHA256:-41aaba7b1235304ab5aa0624530c67ae829496cd29e875925271efdccc28c03e}"
+REPO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 info() {
     echo "[INFO] $*"
@@ -55,6 +59,49 @@ has_compatible_nodejs() {
         && [ "$major" -ge "$MIN_NODE_MAJOR" ] \
         && command -v npm >/dev/null 2>&1 \
         && command -v npx >/dev/null 2>&1
+}
+
+seven_zip_major() {
+    local command_path="$1" version_output
+    version_output="$("$command_path" -version 2>&1 || true)"
+    if [[ "$version_output" =~ 7-Zip\ (\[[0-9]+\]\ )?([0-9]+)\. ]]; then
+        echo "${BASH_REMATCH[2]}"
+    fi
+}
+
+ensure_modern_7zip() {
+    local command_path="" major="" archive tmp_dir install_dir
+
+    if command -v 7zz >/dev/null 2>&1; then
+        command_path="$(command -v 7zz)"
+    elif command -v 7z >/dev/null 2>&1; then
+        command_path="$(command -v 7z)"
+    fi
+    if [ -n "$command_path" ]; then
+        major="$(seven_zip_major "$command_path")"
+    fi
+    if [ -n "$major" ] && [ "$major" -ge 22 ]; then
+        info "7-Zip toolchain ready: $command_path (major $major)"
+        return 0
+    fi
+
+    [ "$(uname -m)" = "x86_64" ] || error \
+        "7-Zip 22+ is required for APFS DMGs; automatic fallback currently supports x86_64 only"
+
+    install_dir="$REPO_DIR/.tools/7zip"
+    tmp_dir="$(mktemp -d)"
+    archive="$tmp_dir/7zip.tar.xz"
+    info "System 7-Zip is too old for APFS; installing project-local 7-Zip $SEVEN_ZIP_VERSION"
+    curl -fL \
+        "https://github.com/ip7z/7zip/releases/download/${SEVEN_ZIP_VERSION}/7z${SEVEN_ZIP_RELEASE}-linux-x64.tar.xz" \
+        -o "$archive"
+    printf '%s  %s\n' "$SEVEN_ZIP_X64_SHA256" "$archive" | sha256sum -c -
+    rm -rf "$install_dir"
+    mkdir -p "$install_dir"
+    tar -xJf "$archive" -C "$install_dir"
+    [ -x "$install_dir/7zz" ] || error "Project-local 7-Zip installation failed"
+    rm -rf "$tmp_dir"
+    info "Project-local 7-Zip ready: $install_dir/7zz"
 }
 
 validate_nodejs_major() {
@@ -203,6 +250,8 @@ main() {
             ;;
     esac
 
+    ensure_modern_7zip
+
     info "Dependencies are ready. Next steps:"
     info "  put one official Intel/x64 WorkBuddy DMG in downloads/"
     info "  make build-app"
@@ -210,4 +259,6 @@ main() {
     info "  make install"
 }
 
-main "$@"
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi
