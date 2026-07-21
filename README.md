@@ -5,3 +5,179 @@
 - [简体中文](README.cn)
 - [繁體中文](README.zh-Hant)
 - [English](README.en)
+
+# 简体中文
+
+## 项目简介
+
+这是一个非官方 Linux 移植工具，核心作用是将你自行获取的官方 WorkBuddy macOS Intel/x64 版本 DMG 安装包，转换为可在本地 Linux 系统运行的 Electron 应用。
+
+本仓库**仅作为转换工具**，绝不充当软件分发渠道。请务必前往官方网站下载正版 Intel/x64 架构 DMG 安装包，放置于项目 `downloads/` 目录下；所有生成的应用目录、安装包产物均仅保留在本地，且已加入 Git 忽略规则，不会被提交至仓库。
+
+遇到任何 Bug 请在本仓库提交 Issue，并附上 Linux 发行版、WorkBuddy DMG 版本和构建日志；请勿向官方客服反馈 Linux 移植环境中的问题。
+
+
+## 版本适配说明
+
+当前补丁已在官方 WorkBuddy **5.2.6**（Intel/x64 DMG）和 Ubuntu 22.04 x86_64 上验证通过。其他版本的 DMG 可能因为上游代码结构变化导致补丁无法正确应用。如遇到构建失败或运行异常，请在本仓库提 Issue 并附上所使用的 DMG 版本号。
+
+## 快速安装
+
+本项目**未上架 AUR**，所有 Linux 发行版均需在本地通过本仓库脚本完成构建与安装。
+
+1. 克隆本项目至本地 Linux 机器；
+2. 在项目根目录创建 `downloads` 文件夹；
+3. 自行从官方渠道下载 Intel/x64 架构 DMG 安装包，放入 `downloads/` 目录（仅放**唯一一份**）；
+4. 依次执行：
+
+```bash
+make deps
+make build-app
+make package
+make install
+```
+
+`scripts/install-deps.sh` 会自动识别当前系统的包管理器（支持 `apt`、`dnf5`、`dnf`、`pacman`、`zypper`），一键安装 DMG 提取、Electron 运行时下载、原生模块重建、安装包生成所需的全部依赖。
+
+> Ubuntu 22.04 自带的 7-Zip 21.07 不支持新版 APFS DMG。`make deps` 检测到旧版后会下载经 SHA-256 校验的官方 7-Zip 到项目本地 `.tools/`，不会覆盖系统命令。
+
+> 测试范围：已在 Debian 系（Linux Mint 22.3）和 Arch 系（CachyOS）完成完整打包部署实测，运行稳定。
+
+## 构建与运行
+
+### 推荐构建方式
+
+将官方 DMG 文件放入 `downloads/` 目录后，直接执行：
+
+```bash
+make build-app
+```
+
+### 自定义 DMG 路径
+
+也可手动指定官方 DMG 文件路径：
+
+```bash
+make build-app DMG=/path/to/WorkBuddy.dmg
+```
+
+### 运行生成的应用
+
+```bash
+make run-app
+```
+
+### 打包并安装
+
+自动生成适配当前发行版的安装包，并完成本地安装：
+
+```bash
+make package
+make install
+```
+
+### 清理构建产物
+
+清除所有构建生成的临时文件与应用目录：
+
+```bash
+make clean
+```
+
+## 项目状态
+
+目前项目已完整实现 Linux 端的转换与打包核心流程，具体功能如下：
+
+- 借助 `7z`/`7zz` 工具，自动提取 `downloads/` 目录下唯一的官方 DMG 安装包；
+- 从 macOS 应用包元数据中，自动识别上游 Electron 版本号；
+- 下载与识别版本匹配的 Linux 版 Electron 运行时；
+- 将 WorkBuddy 应用核心程序（`app.asar` 及 `app.asar.unpacked`）复制至 `resources/` 目录；
+- 通过 `@electron/rebuild`，针对 Linux 系统与 Electron 环境重建原生 Node 模块；
+- 安装 `@lydell/node-pty` Linux 平台预编译包以支持内置 CLI；
+- 更新适配 Linux 平台的依赖包，例如 `@vscode/ripgrep`；
+- 自动生成 Linux 系统启动器与桌面入口文件；
+- 根据当前 Linux 发行版，一键生成适配的 `.deb`、`.rpm` 或 `.pkg.tar.zst` 格式安装包。
+
+> 项目**未集成自动更新功能**，如需更新软件，只需手动下载新版官方 DMG，放入 `downloads/` 目录后，重新执行构建、安装流程即可覆盖本地旧版本。
+
+## 实现原理
+
+本项目沿用了社区 Linux 转换工具的通用思路，并针对 Ubuntu 22.04 的 APFS DMG 和新版 WorkBuddy 做了适配；**未移植自动更新模块**，核心流程如下：
+
+1. 以用户自行提供的官方 macOS DMG 安装包作为输入源；
+2. 仅提取 Electron 应用核心程序，不对外分发任何官方软件内容；
+3. 用对应版本的 Linux Electron 运行时，替换原 macOS 版运行时；
+4. **原生模块从源码重新编译**：macOS DMG 预打包的原生模块（如 `node-pty`、`better-sqlite3`）无法在 Linux 上直接使用。本工具自动从 npm 下载对应版本的完整源码，在隔离目录基于 Linux Electron 头文件重新编译为 ELF 二进制文件，再覆盖回应用目录；
+5. 安装 Linux 平台专属的预编译包（如 `@lydell/node-pty-linux-x64`）以支持内置终端 CLI；
+6. 更新适配 Linux 平台的专属二进制依赖包；
+7. 本地生成 Linux 系统启动配置与安装包元数据；
+8. 编译生成对应发行版的原生安装包，通过 `make install` 完成最新版本安装。
+
+WorkBuddy 基于 VS Code/Electron 开发，其 macOS 应用的 `app.asar` 文件包含跨平台 JavaScript 核心代码，`app.asar.unpacked` 目录包含原生模块。Linux 转换只需完成平台二进制文件替换、原生模块重新编译即可实现兼容。
+
+## 移植后的已知限制
+
+由于上游打包特性的限制以及闭源商业组件的存在，移植后的 Linux 版本存在以下预期内的功能降级（不影响核心开发体验）：
+
+1. **腾讯文档引擎失效**：官方 DMG 包内捆绑的 `@tencent/docs-engine` 仅提供了 macOS Arm64 架构的专有二进制库（`.dylib`）。Linux 无法运行此类文件且无源码可供重新编译，为防止底层引发 `dlopen invalid ELF header` 导致的主进程崩溃，转换脚本已将其强制移除。**影响**：应用内如果包含深度整合的腾讯文档协同编辑功能将不可用，不影响 AI 助手和本地代码编辑。
+2. **AI 代码沙盒降级**：内置 CLI 工具 `vendor/sandbox` 是腾讯内部私有的代码沙盒引擎（Tencent Sandbox），使用的是包含 Windows 和 macOS 格式的预编译隔离库。由于缺少 Linux 版沙盒核心，脚本已清理无关平台的二进制文件。**影响**：当 AI 助手尝试全自动执行代码时，会因为沙盒模块缺失而回退到无沙盒的真实终端中执行，或者提示安全环境不可用而拒绝执行自动化脚本。
+3. **自动更新不可用**：Linux 移植版已禁用应用内的"检查更新"功能（菜单项灰化、后台自动检查已关闭）。上游更新器依赖 macOS ShipIt / Windows Squirrel 安装器，在 Linux 上无法使用。如需更新，请手动下载新版官方 DMG 并重新执行构建流程。
+
+## 移植过程中已修复的问题
+
+以下问题在移植过程中已通过 Linux 运行时补丁（`scripts/lib/apply-linux-patches.js`）修复：
+
+1. **主窗口无法弹出（E2BIG）**：上游代码将 ~260KB 的产品配置 JSON 写入 `process.env.ACC_PRODUCT_CONFIG_V3`，超过 Linux `MAX_ARG_STRLEN`（128KB/条）限制，导致 Chromium 网络服务/GPU/Utility 子进程全部 spawn 失败，渲染进程无法启动。**修复方式**：用 Proxy 替换 `process.env`，将超大 key 隐藏在 JS 私有 slot 中，libc environ 保持小体积。
+2. **托盘右键菜单为空**：Linux 的 AppIndicator 后端不触发 `click`/`right-click` 事件，只显示通过 `tray.setContextMenu()` 附加的菜单。**修复方式**：在 Linux 下额外调用 `this.tray.setContextMenu(contextMenu)`。
+3. **托盘图标显示为感叹号**：上游把图片 resize 成内存 NativeImage 传给 Tray，AppIndicator 无法正确渲染。**修复方式**：Linux 下直接用磁盘上的 `.workbuddy-linux/workbuddy.png` 路径构造 Tray。
+4. **Sidecar 子进程 spawn 失败（E2BIG）**：`buildCliEnv()` 显式把 260KB 字符串塞进 spawn 的 env 对象。**修复方式**：Monkey-patch `child_process.spawn/spawnSync`，超过 100KB 的 env 条目自动 spill 到临时文件，子进程启动时从文件读回并通过 Proxy 恢复。
+5. **`@lydell/node-pty-linux-x64` 找不到**：原 macOS asar 里只有 darwin 平台包。**修复方式**：repack 时将 Linux 平台包注入 asar 并标记为 unpacked。
+
+## 常用自定义配置
+
+如需自定义安装路径、切换 Electron 镜像，可通过以下命令执行：
+
+```bash
+# 自定义安装目录
+WORKBUDDY_INSTALL_DIR=/opt/tmp/workbuddy-app bash install.sh
+# 切换Electron镜像源
+ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ bash install.sh
+# 自定义Electron头文件下载地址
+ELECTRON_HEADERS_URL=https://artifacts.electronjs.org/headers/dist bash install.sh
+```
+
+## 仓库维护规范
+
+以下目录因会存放上游软件、生成类安装包文件，已被 Git 忽略，**切勿手动提交**：
+
+- `downloads/`
+- `build/`
+- `workbuddy-app/`
+- `dist/`
+- `reference/`
+
+禁止提交 DMG 安装包、解压后的 `.app` 应用包、生成的 Linux 应用目录及各类原生安装包产物。
+
+## 免责声明
+
+本项目为**非官方社区开源工具**，与腾讯官方无任何关联。WorkBuddy 是腾讯旗下产品（版权 © 2026 腾讯云计算（北京）有限责任公司丨腾讯科技（深圳）有限公司 版权所有）。本工具不分发任何 WorkBuddy 官方软件，仅自动化实现用户对自有正版安装包的格式转换流程。
+
+使用本工具产生的 WorkBuddy 应用仍受腾讯官方协议约束，请以官网或应用内最新版服务条款、隐私协议为准。
+
+使用本工具即表示您已知悉并同意以下内容：
+
+1. **用户责任**：您有责任确保自行获取的 DMG 安装包来源合法，并遵守 WorkBuddy 的最终用户许可协议（EULA）及相关服务条款。
+2. **无担保**：本工具按"现状"提供，不提供任何形式的明示或暗示担保，包括但不限于对适销性、特定用途适用性和非侵权性的担保。
+3. **无官方支持**：本项目是独立社区项目，腾讯官方不对本工具提供任何技术支持。在 Linux 移植环境下遇到的问题，请在本仓库提 Issue，**严禁向官方客服反馈**。
+4. **风险自担**：使用本工具进行格式转换和运行所产生的一切后果，由用户自行承担。
+5. **商标声明**：WorkBuddy、CodeBuddy 及相关标识是腾讯公司的商标或注册商标。本项目使用这些名称仅用于描述性目的，不暗示任何官方认可或授权。
+6. **下架预案**：如腾讯或任何相关权利方对本项目存在异议，请通过本仓库 Issue 或邮件联系维护者。维护者承诺在收到合理异议后立即停止维护，并按权利方要求处理 GitHub 仓库。
+7. **项目定位**：本项目（包括本 GitHub 仓库及相关自动化脚本）仅用于技术研究与概念验证。维护者不分发任何官方二进制软件。
+8. **第三方责任**：任何第三方因修改本项目，或自行分发移植二进制安装包（Releases）而产生的版权争议与法律责任，由该第三方独立承担。
+
+## 开源许可证
+
+本项目（转换脚本及相关 recipe）采用 MIT 开源许可证，详细内容请查看 [LICENSE](LICENSE) 文件。MIT 许可仅覆盖本仓库中的转换工具，**不延伸到通过本工具安装的腾讯 WorkBuddy 二进制文件**——后者仍受腾讯官方私有协议约束。
+
+---
+

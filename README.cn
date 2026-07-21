@@ -2,7 +2,7 @@
 
 ## 项目简介
 
-这是一个由 `Hermon803` 独立维护的非官方 Linux 移植工具，核心作用是将你自行获取的官方 WorkBuddy macOS Intel/x64 版本 DMG 安装包，转换为可在本地 Linux 系统运行的 Electron 应用。
+这是一个非官方 Linux 移植工具，核心作用是将你自行获取的官方 WorkBuddy macOS Intel/x64 版本 DMG 安装包，转换为可在本地 Linux 系统运行的 Electron 应用。
 
 本仓库**仅作为转换工具**，绝不充当软件分发渠道。请务必前往官方网站下载正版 Intel/x64 架构 DMG 安装包，放置于项目 `downloads/` 目录下；所有生成的应用目录、安装包产物均仅保留在本地，且已加入 Git 忽略规则，不会被提交至仓库。
 
@@ -172,7 +172,3 @@ ELECTRON_HEADERS_URL=https://artifacts.electronjs.org/headers/dist bash install.
 本项目（转换脚本及相关 recipe）采用 MIT 开源许可证，详细内容请查看 [LICENSE](LICENSE) 文件。MIT 许可仅覆盖本仓库中的转换工具，**不延伸到通过本工具安装的腾讯 WorkBuddy 二进制文件**——后者仍受腾讯官方私有协议约束。
 
 ---
-
-# 繁體中文
-
-## 專案簡介
