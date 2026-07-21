@@ -1,3 +1,31 @@
+<div align="center">
+
+WorkBuddy 的非官方 Linux 自動化移植與安裝構建腳本工具
+
+</div>
+
+<p align="middle">
+  <img src="https://img.shields.io/badge/deb-Ubuntu_%7C_Debian_%7C_Linux_Mint-A81D33?style=flat&logo=debian&logoColor=white" alt="Debian Ubuntu Support">
+  <img src="https://img.shields.io/badge/arch-ArchLinux_%7C_CachyOS_%7C_Manjaro-1793D1?style=flat&logo=arch-linux&logoColor=white" alt="AUR Package">
+  <img src="https://img.shields.io/badge/rpm-Fedora_%7C_RHEL-006699?style=flat&logo=fedora&logoColor=white" alt="Fedora RHEL Support">
+  <br>
+  <img src="https://img.shields.io/badge/版本適配-5.2.6-0052D9?style=flat&logo=probot&logoColor=white" alt="Supported Version">
+  <img src="https://img.shields.io/badge/Electron-41.1.1-47307B?style=flat&logo=electron&logoColor=white" alt="Electron Version">
+  <img src="https://img.shields.io/badge/狀態-Unofficial-d73a49?style=flat" alt="Status Unofficial">
+</p>
+
+
+<div align="center">
+
+[English](README.en) | [简体中文](README.cn) | [繁體中文](#繁體中文)
+
+</div>
+
+# 繁體中文
+
+## 專案簡介
+
+這是一個非官方 Linux 移植工具，核心作用是將你自行取得的官方 WorkBuddy macOS Intel/x64 版本 DMG 安裝包，轉換為可在本機 Linux 系統執行的 Electron 應用。
 
 本倉庫**僅作為轉換工具**，絕不充當軟體分發管道。請務必前往官方網站下載正版 Intel/x64 架構 DMG 安裝包，放置於專案 `downloads/` 目錄下；所有產生的應用程式目錄、安裝包產物均僅保留在本機，且已加入 Git 忽略規則，不會被提交至倉庫。
 

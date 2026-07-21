@@ -1,10 +1,35 @@
-# WorkBuddy for Linux — Ubuntu 22.04 Port
+<div align="center">
 
-本项目文档分为三种语言：
+WorkBuddy — Unofficial Linux Port & Build Toolchain
+
+</div>
+
+<p align="middle">
+  <img src="https://img.shields.io/badge/deb-Ubuntu_%7C_Debian_%7C_Linux_Mint-A81D33?style=flat&logo=debian&logoColor=white" alt="Debian Ubuntu Support">
+  <img src="https://img.shields.io/badge/arch-ArchLinux_%7C_CachyOS_%7C_Manjaro-1793D1?style=flat&logo=arch-linux&logoColor=white" alt="AUR Package">
+  <img src="https://img.shields.io/badge/rpm-Fedora_%7C_RHEL-006699?style=flat&logo=fedora&logoColor=white" alt="Fedora RHEL Support">
+  <br>
+  <img src="https://img.shields.io/badge/Version-5.2.6-0052D9?style=flat&logo=probot&logoColor=white" alt="Supported Version">
+  <img src="https://img.shields.io/badge/Electron-41.1.1-47307B?style=flat&logo=electron&logoColor=white" alt="Electron Version">
+  <img src="https://img.shields.io/badge/Status-Unofficial-d73a49?style=flat" alt="Status Unofficial">
+</p>
+
+
+<div align="center">
+
+[English](#english) | [简体中文](#简体中文) | [繁體中文](#繁體中文)
+
+</div>
+
+# English
+
+This document is available in three languages:
 
 - [简体中文](README.cn)
 - [繁體中文](README.zh-Hant)
 - [English](README.en)
+
+---
 
 # 简体中文
 
