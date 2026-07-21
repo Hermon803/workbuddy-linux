@@ -21,17 +21,6 @@ WorkBuddy — Unofficial Linux Port & Build Toolchain
 
 </div>
 
-# English
-
-This document is available in three languages:
-
-- [简体中文](README.cn)
-- [繁體中文](README.zh-Hant)
-- [English](README.en)
-
----
-
-# 简体中文
 
 ## 项目简介
 
