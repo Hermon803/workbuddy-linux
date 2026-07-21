@@ -1,6 +1,6 @@
 <div align="center">
 
-# WorkBuddy for Linux (Unofficial)
+# WorkBuddy for Linux — Ubuntu 22.04 Port
 
 </div>
 
@@ -15,8 +15,8 @@ WorkBuddy 的非官方 Linux 自动化移植与安装构建脚本工具
   <img src="https://img.shields.io/badge/arch-ArchLinux_%7C_CachyOS_%7C_Manjaro-1793D1?style=flat&logo=arch-linux&logoColor=white" alt="AUR Package">
   <img src="https://img.shields.io/badge/rpm-Fedora_%7C_RHEL-006699?style=flat&logo=fedora&logoColor=white" alt="Fedora RHEL Support">
   <br>
-  <img src="https://img.shields.io/badge/版本适配-4.22.10-0052D9?style=flat&logo=probot&logoColor=white" alt="Supported Version">
-  <img src="https://img.shields.io/badge/Electron-41.1.1-47307B?style=flat&logo=electron&logoColor=white" alt="Electron Version">
+  <img src="https://img.shields.io/badge/版本适配-5.2.6-0052D9?style=flat&logo=probot&logoColor=white" alt="Supported Version">
+  <img src="https://img.shields.io/badge/Electron-37.10.3-47307B?style=flat&logo=electron&logoColor=white" alt="Electron Version">
   <img src="https://img.shields.io/badge/状态-Unofficial-d73a49?style=flat" alt="Status Unofficial">
 </p>
 
@@ -29,7 +29,7 @@ WorkBuddy 的非官方 Linux 自动化移植与安装构建脚本工具
 
 <div align="center">
 
-### **📦 项目归档公告**：本项目已进入归档状态，详情请参阅 [Discussions #4](https://github.com/JipZeonGit/workbuddy-linux/discussions/4)。
+### **📦 独立维护项目**：本仓库由 `Hermon803` 维护，面向 Ubuntu 22.04 及兼容 Linux 发行版。
 
 </div>
 
@@ -39,16 +39,16 @@ WorkBuddy 的非官方 Linux 自动化移植与安装构建脚本工具
 
 ## 项目简介
 
-这是一款非官方社区工具，核心作用是将你自行获取的官方 WorkBuddy macOS Intel/x64 版本 DMG 安装包，转换为可在本地 Linux 系统运行的 Electron 应用。
+这是一个由 `Hermon803` 独立维护的非官方 Linux 移植工具，核心作用是将你自行获取的官方 WorkBuddy macOS Intel/x64 版本 DMG 安装包，转换为可在本地 Linux 系统运行的 Electron 应用。
 
 本仓库**仅作为转换工具**，绝不充当软件分发渠道。请务必前往官方网站下载正版 Intel/x64 架构 DMG 安装包，放置于项目 `downloads/` 目录下；所有生成的应用目录、安装包产物均仅保留在本地，且已加入 Git 忽略规则，不会被提交至仓库。
 
-遇到任何 Bug 请在此仓库提 Issue ，严禁跳脸向官方客服反馈在 Linux 移植后使用的相关问题。
+遇到任何 Bug 请在本仓库提交 Issue，并附上 Linux 发行版、WorkBuddy DMG 版本和构建日志；请勿向官方客服反馈 Linux 移植环境中的问题。
 
 
 ## 版本适配说明
 
-当前补丁基于官方 WorkBuddy **4.22.10**（构建号 `27634624-ec5e02bd`）验证通过。更高版本的 DMG 可能因为上游代码结构变化导致补丁无法正确应用。如遇到构建失败或运行异常，请在本仓库提 Issue 并附上所使用的 DMG 版本号。
+当前补丁已在官方 WorkBuddy **5.2.6**（Intel/x64 DMG）和 Ubuntu 22.04 x86_64 上验证通过。其他版本的 DMG 可能因为上游代码结构变化导致补丁无法正确应用。如遇到构建失败或运行异常，请在本仓库提 Issue 并附上所使用的 DMG 版本号。
 
 ## 快速安装
 
@@ -131,7 +131,7 @@ make clean
 
 ## 实现原理
 
-本项目参考了 `codebuddy-ide-cn-linux`（同作者的成功移植案例）的本地转换与打包逻辑，但**未移植自动更新模块**，核心流程如下：
+本项目沿用了社区 Linux 转换工具的通用思路，并针对 Ubuntu 22.04 的 APFS DMG 和新版 WorkBuddy 做了适配；**未移植自动更新模块**，核心流程如下：
 
 1. 以用户自行提供的官方 macOS DMG 安装包作为输入源；
 2. 仅提取 Electron 应用核心程序，不对外分发任何官方软件内容；
@@ -201,8 +201,8 @@ ELECTRON_HEADERS_URL=https://artifacts.electronjs.org/headers/dist bash install.
 4. **风险自担**：使用本工具进行格式转换和运行所产生的一切后果，由用户自行承担。
 5. **商标声明**：WorkBuddy、CodeBuddy 及相关标识是腾讯公司的商标或注册商标。本项目使用这些名称仅用于描述性目的，不暗示任何官方认可或授权。
 6. **下架预案**：如腾讯或任何相关权利方对本项目存在异议，请通过本仓库 Issue 或邮件联系维护者。维护者承诺在收到合理异议后立即停止维护，并按权利方要求处理 GitHub 仓库。
-7. **项目定位**： 本项目（包括本 GitHub 仓库及相关自动化脚本）仅用于技术研究与概念验证。原作者从未、亦绝不分发任何官方二进制软件。
-8. **第三方责任**： 任何第三方因 Fork、修改本项目，或自行分发移植二进制安装包（Releases）而产生的版权争议与法律责任，均由该第三方独立承担，与本项目原作者无关。
+7. **项目定位**：本项目（包括本 GitHub 仓库及相关自动化脚本）仅用于技术研究与概念验证。维护者不分发任何官方二进制软件。
+8. **第三方责任**：任何第三方因修改本项目，或自行分发移植二进制安装包（Releases）而产生的版权争议与法律责任，由该第三方独立承担。
 
 ## 开源许可证
 
@@ -222,7 +222,7 @@ ELECTRON_HEADERS_URL=https://artifacts.electronjs.org/headers/dist bash install.
 
 ## 版本適配說明
 
-當前補丁基於官方 WorkBuddy **4.22.10**（構建號 `27634624-ec5e02bd`）驗證通過。更高版本的 DMG 可能因為上游程式碼結構變化導致補丁無法正確套用。如遇到構建失敗或運行異常，請在本倉庫提 Issue 並附上所使用的 DMG 版本號。
+當前補丁已在官方 WorkBuddy **5.2.6**（Intel/x64 DMG）與 Ubuntu 22.04 x86_64 上驗證通過。其他版本的 DMG 可能因為上游程式碼結構變化導致補丁無法正確套用。如遇到構建失敗或運行異常，請在本倉庫提 Issue 並附上所使用的 DMG 版本號。
 
 ## 快速安裝
 
@@ -305,7 +305,7 @@ make clean
 
 ## 實現原理
 
-本專案參考了 `codebuddy-ide-cn-linux`（同作者的成功移植案例）的本機轉換與打包邏輯，但**未移植自動更新模組**，核心流程如下：
+本專案沿用社群 Linux 轉換工具的通用思路，並針對 Ubuntu 22.04 的 APFS DMG 與新版 WorkBuddy 做了適配；**未移植自動更新模組**，核心流程如下：
 
 1. 以使用者自行提供的官方 macOS DMG 安裝包作為輸入來源；
 2. 僅提取 Electron 應用程式核心程式，不對外分發任何官方軟體內容；
@@ -375,8 +375,8 @@ ELECTRON_HEADERS_URL=https://artifacts.electronjs.org/headers/dist bash install.
 4. **風險自擔**：使用本工具進行格式轉換和運行所產生的一切後果，由使用者自行承擔。
 5. **商標聲明**：WorkBuddy、CodeBuddy 及相關標識是騰訊公司的商標或註冊商標。本專案使用這些名稱僅用於描述性目的，不暗示任何官方認可或授權。
 6. **下架預案**：如騰訊或任何相關權利方對本專案存在異議，請透過本倉庫 Issue 或郵件聯繫維護者。維護者承諾在收到合理異議後立即停止維護，並按權利方要求處理 GitHub 倉庫。
-7. **專案定位**：本專案（包括本 GitHub 倉庫及相關自動化腳本）僅用於技術研究與概念驗證。原作者從未、亦絕不分發任何官方二進位軟體。
-8. **第三方責任**：任何第三方因 Fork、修改本專案，或自行分發移植二進位安裝包（Releases）而產生的版權爭議與法律責任，均由該第三方獨立承擔，與本專案原作者無關。
+7. **專案定位**：本專案（包括本 GitHub 倉庫及相關自動化腳本）僅用於技術研究與概念驗證。維護者不分發任何官方二進位軟體。
+8. **第三方責任**：任何第三方因修改本專案，或自行分發移植二進位安裝包（Releases）而產生的版權爭議與法律責任，由該第三方獨立承擔。
 
 ## 開源授權條款
 
@@ -388,15 +388,15 @@ ELECTRON_HEADERS_URL=https://artifacts.electronjs.org/headers/dist bash install.
 
 ## Project Introduction
 
-This is an unofficial community tool designed to convert your legally obtained official WorkBuddy macOS Intel/x64 DMG installer into a local Linux Electron application.
+This is an independently maintained, unofficial Linux porting tool by `Hermon803`. It converts a legally obtained official WorkBuddy macOS Intel/x64 DMG installer into a local Linux Electron application.
 
 This repository **serves solely as a converter** and will never act as a software redistribution channel. Please download the genuine Intel/x64 DMG installer from the official website and place it in the `downloads/` directory. All generated application directories and package artifacts are stored locally only and are added to Git ignore rules to avoid being committed to the repository.
 
-If you encounter any bugs, please submit an Issue in this repository. Do not directly contact official customer service to report issues related to usage after Linux porting.
+If you encounter any bugs, please submit an Issue in this repository with your Linux distribution, WorkBuddy DMG version, and build log. Do not report Linux-port issues to official customer service.
 
 ## Version Compatibility
 
-The current patches have been verified against official WorkBuddy **4.22.10** (build `27634624-ec5e02bd`). Higher versions of the DMG may have upstream code structure changes that prevent patches from applying correctly. If you encounter build failures or runtime issues, please file an Issue in this repository with the DMG version number you are using.
+The current patches have been verified against official WorkBuddy **5.2.6** (Intel/x64 DMG) on Ubuntu 22.04 x86_64. Other DMG versions may have upstream code structure changes that prevent patches from applying correctly. If you encounter build failures or runtime issues, please file an Issue in this repository with the DMG version number you are using.
 
 ## Quick Install
 
@@ -479,7 +479,7 @@ The project currently fully implements the core Linux-side conversion and packag
 
 ## How It Works
 
-This project references the local conversion and packaging logic of `codebuddy-ide-cn-linux` (a successful porting case by the same author), but **does not port its auto-update module**. The core workflow is as follows:
+This project follows the general approach used by community Linux conversion tools and adds compatibility for Ubuntu 22.04 APFS DMGs and newer WorkBuddy builds. It **does not port an auto-update module**. The core workflow is as follows:
 
 1. Take the official macOS DMG installer provided by the user as the input source;
 2. Only extract the core Electron application payload without redistributing any official software content;
@@ -549,8 +549,8 @@ By using this tool, you acknowledge and agree to the following:
 4. **Use at Your Own Risk**: All consequences arising from using this tool for format conversion and running the application are borne solely by the user.
 5. **Trademark Notice**: WorkBuddy, CodeBuddy, and related logos are trademarks or registered trademarks of Tencent. The use of these names in this project is for descriptive purposes only and does not imply any official endorsement or authorization.
 6. **Takedown Policy**: If Tencent or any rights holder objects to this project, please contact the maintainer via a GitHub issue or email. The maintainer commits to immediately suspending maintenance and processing the GitHub repository in accordance with the rights holder's reasonable request upon receipt of such objection.
-7. **Project Purpose**: This project (including this GitHub repository and any related automation scripts) is intended solely for technical research and proof-of-concept purposes. The original author has never distributed, and will never distribute, any official proprietary binary software.
-8. **Third-Party Responsibility**: Any copyright disputes or legal liabilities arising from third-party forks, modifications, or the independent publication of pre-compiled binary installation packages (including GitHub Releases) shall be the sole responsibility of such third parties, and are entirely unrelated to the original author.
+7. **Project Purpose**: This project (including this GitHub repository and related automation scripts) is intended solely for technical research and proof-of-concept purposes. The maintainer does not distribute any official proprietary binary software.
+8. **Third-Party Responsibility**: Any copyright disputes or legal liabilities arising from modifications or independent publication of pre-compiled binary installation packages (including GitHub Releases) are the sole responsibility of the party publishing them.
 
 ## License
 
